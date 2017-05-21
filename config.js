@@ -4,10 +4,10 @@
 
 module.exports = {
 
-    consumer_key:         '1wLLt2h47ITXA2BQAPBZo4STu',
-    consumer_secret:      'wblPK2fullt2QBkB4CwRItIXr9uII8DzUgkBKZEnP6G2YNMwQt',
-    access_token:         '65948922-zSUVPIdDdiOcjRcGI6ucoxl3XUZNCabNtb29ZQhlX',
-    access_token_secret:  'eUdI232f2ZxXOVOgT0Ge20kYzgt1AVRpCVGja19ifgnZa',
+    consumer_key:         '2Ytb7Y36Rf8x0PTqqAi4T8zSD',
+    consumer_secret:      'TP3YmJ9S9uAT88Ay5HXSMQaxW7RDtyikR5aMJi5Rt3Yi9giTdV',
+    access_token:         '866091114985553920-aTYSa5N1Mf1UnbNef6NQpv5oD6oU0FB',
+    access_token_secret:  '0H51j5ebZ5fD2agZvuK9C4iGQ7dnSiBvwM8MiHtLftiRB',
     timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests.
 
 }

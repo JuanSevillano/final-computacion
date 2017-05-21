@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var Twit = require('twit');
-// Iniciando la lectura de Twitter con el Auth de @JuanSevillano
+// Iniciando la lectura de Twitter con el Auth de @juandsevillano
 // Config es el require de config.js
 var config = require('./config');
 var T = new Twit(config);
@@ -29,20 +29,77 @@ app.use('/', index);
 app.use('/users', users);
 
 
-/*
- //var ran = Math.floor(Math.random() * 100);
- //tweetSome("nee advance on sketch #processing #creativeCode");
- //tweetSome("No me odien, no me bloqueen, new advance on server #NodeJs #TwitterApi #TuMeEstasHablandoEsDeAdrenalina" + ' ' + ran);
- // Conversión en tiempo para hacer un intervalo
- // 1000 = 1s * 60 = 1m * 60 = 1h * 24 = 1d
- //setInterval(tweetSome, 1000 * 20); // Cada 20 segundos va a pubicar con estos hashtags
- */
+//var santaMarta = [ '11.2407900', '-74.1990400' ];
 
-// Getting the accces to executable cmd
-tweetIt();
-setInterval(tweetIt, 1000 * 20);
+var stream = T.stream('statuses/filter', { track: '' });
+stream.on('tweet', function (tweet) {
+    var ubicacion = tweet.user.location;
+    if(ubicacion != null){
+    var str = ubicacion.split(",");
+    var stri = ubicacion.split(" ");
+    console.log(str[0] + ' ' + stri[0]);
+    }
 
-function tweetIt() {
+    fs.writeFile("tweet.json",JSON.stringify(tweet,null,2));
+});
+
+// Obteniendo el stream de User
+//var stream = T.stream('user');
+// Siguiendo tweets con streaming
+//stream.on('tweet', visualizacion);
+// Callback del streaming tweets
+function visualizacion(eventMsg) {
+    var x = Math.floor(Math.random()*2);
+    // Nombre de quien nos menciona
+    var replyto = eventMsg.in_reply_to_screen_name;
+    var text = eventMsg.text;
+    var from = eventMsg.user.screen_name;
+    var ubicacion = eventMsg.user.geo_enabled;
+    var hash = eventMsg.entities.hashtags.text;
+
+    if(hash === 'uribe' && ubicacion === true){
+        console.log(ubicacion);
+        console.log(hash);
+        console.log('twit' + ' ' + text);
+        var newTweet = '@' + from + ' '+ 'enviando un tweet back a alguien que me etiqueto' + x;
+        //tweetSome(newTweet);
+    }
+    ///fs.writeFile("tweet.json",JSON.stringify(event,null,2));
+}
+
+// Cada vez que alguien me sigue
+stream.on('follow', followed);
+// funcion callback cuando te siguen
+function followed(e) {
+    // Obteniendo el nombre del usuario
+    var nombre = e.source.name;
+    // @usuario
+    var screenName = e.source.screen_name;
+    tweetSome('@' + screenName + ' ' + ' Gracias por seguir nuestro proyecto #Lighty #DelPapelALaComputacion #Sevi #Cuadros #Velasco');
+}
+
+
+
+
+
+
+function tweetSome(txt) {
+    var tweet = {
+        status: txt
+    }
+    T.post('statuses/update', tweet, tweeted);
+    // Que hacer cuando ya he tuiteado!
+    function tweeted(err, data, response) {
+        if (err) {
+            console.log('Hay un problemitap!');
+            console.log(JSON.stringify(err));
+        } else {
+            console.log('Funciona');
+        }
+    }
+}
+
+function tweetImage() {
     // Runing from console
     var cmd = 'processing-java --sketch=..\lineaCurva --run';
     var cmd2 = 'processing-java --sketch=C:\Users\jimmy\Desktop\Terreno --run';
@@ -83,52 +140,7 @@ function tweetIt() {
     }
 }
 
-
-function tweetSome(txt) {
-    var tweet = {
-        status: txt
-    }
-    T.post('statuses/update', tweet, tweeted);
-    // Que hacer cuando ya he tuiteado!
-    function tweeted(err, data, response) {
-        if (err) {
-            console.log('Hay un problemitap!');
-            console.log(JSON.stringify(err));
-        } else {
-            console.log('Funciona');
-        }
-    }
-}
-
-function findTweet() {
-    var params = {
-        q: '#siendo',
-        count: 30
-    };
-    T.get('search/tweets', params,
-        function (err, data, response) {
-            // Callback con los datos
-            var tweets = data.statuses;
-            for (var i = 0; i < tweets.length; i++) {
-                console.log(tweets[i].text);
-            }
-
-        }
-    );
-}
-
-// Obteniendo el stream de User
-var stream = T.stream('user');
-// CAda vez que alguien me sigue
-stream.on('follow', followed);
-function followed(e) {
-    // Obteniendo el nombre del usuario
-    var nombre = e.source.name;
-    // @usuario
-    var screenName = e.source.screen_name;
-    tweetSome('@' + screenName + ' ' + ' Thank you for follow!! i\'m uploading #CreativeCoding #DesignProjects');
-}
-
+//------ express config ----------- //
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
